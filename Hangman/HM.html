@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="HM.js"></script>
+        <link rel="stylesheet" href="HM.css">
+        <title>Hangman</title>
+    </head>
+    <body onload="init()" onresize="docResized()">
+        <div id="fullOut">
+            <input type="text" id="hmKeypress" onclick="fpClick()" onkeyup="keyPressed()">
+            <div id="winLossDiv"></div>
+            <div id="hmImgContainer"></div>
+            <div id="hmTxtContainer">
+                <p id="hmTxt"></p>
+                <p id="glTxt"><br>Guessed Letters</p>
+                <p id="hmUsedLetters"></p>
+            </div>
+        </div>
+    </body>
+    <!-- <iframe src='https://fyldetech.com/Hangman/HM.html?topic=wordset2' width="600px" height="600px"></iframe> -->
+</html>

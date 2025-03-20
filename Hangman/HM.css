@@ -1,0 +1,119 @@
+/* @font-face { font-family: coming-soon; src: url('coming-soon.regular.ttf'); } 
+
+* {
+    font-family: coming-soon;
+} */
+
+body {
+    background-color: white;
+}
+
+#fullOut {
+    position: relative;
+    border: black 2px solid;
+    display: flex; /* Change here for alignment*/
+    justify-content: center;
+    height: calc(100vh - 60px);
+    width: calc(100vw - 60px);
+    padding: 20px;
+    overflow: none;
+    background-color: white;
+}
+
+#hmKeypress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height:100%;
+    background-color: transparent;
+    z-index: 10;
+    cursor: pointer;
+    caret-color: transparent;
+    color: transparent;
+    outline: none;
+    border-style: none;
+}
+
+#hmImgContainer {
+    position: relative;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    /* background-color: green; */
+}
+
+.hmImg {
+    position: absolute;
+    height: 100%;
+    max-width: 100%;
+}
+
+#hmTxtContainer {
+    /* background-color: blue; */
+    container-type: inline-size;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    font-size: min(5cqw, 5cqh);
+    text-align: center;
+    color: black;
+    overflow-wrap: break-word;
+}
+
+#hmTxtContainer p {
+    width: 100%;
+}
+
+#hmTxt {
+    font-weight: bolder;
+    color: black;
+    position: absolute;
+    top: 0;
+}
+
+#glTxt {
+    position: absolute;
+    top: 30%;
+    bottom: 50%;
+}
+
+#hmUsedLetters {
+    color: orange;
+    position: absolute;
+    top: 50%;
+    bottom: 50%;
+}
+
+#winLossDiv {
+    display: none;
+    position: absolute;
+    background-color: hsla(0, 0%, 0%, 0.8);
+    color: white;
+    height: 60%;
+    width: 60%;
+    top: 20%;
+    z-index: 9;
+    border-radius: 40px;
+    text-align: center;
+    border: rgba(0, 0, 0, 0.25) 10px solid;
+}
+
+.wlHeader {
+    font-size: xx-large;
+}
+
+.animLine {
+    stroke-dasharray: 200%; /*200 cause the 2nd line didnt work*/
+    animation-name: animLineAnim;
+    animation-duration: 5s;
+}
+
+@keyframes animLineAnim {
+    from {stroke-dashoffset: 200%;}
+    to {stroke-dashoffset: 0%;}
+}
+
+.svgW {
+    filter: brightness(0) saturate(100%) invert(82%) sepia(0%) saturate(0%) hue-rotate(97deg) brightness(95%) contrast(93%);
+}
