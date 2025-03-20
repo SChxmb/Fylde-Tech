@@ -10,9 +10,10 @@ var elImpass = false
 var urlData = {};
 
 function init() {
+    try {
     var params = location.href.split('?')[1].split('&');
     for (x in params) {urlData[params[x].split('=')[0]] = params[x].split('=')[1];}
-
+    } catch {}
     if ('topic' in urlData) {topic = urlData.topic}
     else {topic="wordset1"} //Default
 
