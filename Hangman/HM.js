@@ -1,5 +1,6 @@
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
 var wordDict = {}
+var topic = ""
 var strikes = 0
 var hideWord = []
 var shownWord = []
