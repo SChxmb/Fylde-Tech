@@ -92,6 +92,7 @@ function keyPressed() {
             document.getElementById("hmTxt").innerHTML = shownWord.join("&numsp;")
         } else {
             //Bad Guess
+            document.getElementById("hmUsedLetters").innerHTML += " " + tempA
             if (!(strikes == 9)){
                 strikes += 1
                 drawNext()
@@ -99,7 +100,6 @@ function keyPressed() {
                 gameLost()
             }
         }
-        document.getElementById("hmUsedLetters").innerHTML = alreadyPressed.join(" ")
     }
 
     document.getElementById("hmKeypress").value = ""
