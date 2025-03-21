@@ -3,6 +3,7 @@
     <head>
         <script src="HM.js"></script>
         <link rel="stylesheet" href="HM.css">
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
         <title>Hangman</title>
     </head>
     <body onload="init()" onresize="docResized()">
@@ -12,10 +13,13 @@
             <div id="hmImgContainer"></div>
             <div id="hmTxtContainer">
                 <p id="hmTxt"></p>
-                <p id="glTxt"><br>Guessed Letters</p>
-                <p id="hmUsedLetters"></p>
+                <div id="hmUsedTxtContainer">
+                    <p id="glTxt"><br>Guessed Letters</p>
+                    <p id="hmUsedLetters"></p>
+                </div>
             </div>
         </div>
+        <p id="test"></p>
     </body>
     <!-- <iframe src='https://fyldetech.com/Hangman/HM.html?topic=wordset2' width="600px" height="600px"></iframe> -->
 </html>

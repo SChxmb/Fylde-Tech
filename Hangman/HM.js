@@ -1,19 +1,19 @@
 const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
 var wordDict = {}
-var topic = ""
 var strikes = 0
 var hideWord = []
 var shownWord = []
 var alreadyPressed = []
 var streak = 0
 var elImpass = false
+var topic = ""
 var urlData = {};
 
 function init() {
     try {
     var params = location.href.split('?')[1].split('&');
     for (x in params) {urlData[params[x].split('=')[0]] = params[x].split('=')[1];}
-    } catch {}
+    } catch {ret('No external args')}
     if ('topic' in urlData) {topic = urlData.topic}
     else {topic="wordset1"} //Default
 
@@ -41,6 +41,7 @@ function init() {
 function docResized() {
     let tempA = document.body
     let tempB = getWidth(tempA) / getHeight(tempA)
+    document.getElementById("test").innerHTML = tempB
     if (tempB > 1.4) {
        document.getElementById("fullOut").style = `width:${getHeight(tempA) * 1.3}px !important;`
     } else if (tempB < 0.8) {
