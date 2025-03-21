@@ -10,14 +10,13 @@ var topic = ""
 var urlData = {};
 
 function init() {
+    docResized()
     try {
     var params = location.href.split('?')[1].split('&');
     for (x in params) {urlData[params[x].split('=')[0]] = params[x].split('=')[1];}
     } catch {ret('No external args')}
     if ('topic' in urlData) {topic = urlData.topic}
     else {topic="wordset1"} //Default
-
-    docResized()
     fetch("words.csv").then((res) => res.text()).then((txt) => {
         wordDict = csvToDict(txt)
         // Shuffler

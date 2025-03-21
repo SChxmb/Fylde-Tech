@@ -99,7 +99,7 @@ body {
 }
 
 .wlHeader {
-    font-size: xx-large;
+    font-size: min(4cqw, 4cqh);
 }
 
 .animLine {
