@@ -115,6 +115,7 @@ class gameCanvas {
         }
         if (hitBottom == this.bCount) {
             roundLost();
+            newWord();
         } else {
             requestAnimationFrame(this.updateBalls)
         }
