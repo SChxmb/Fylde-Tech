@@ -103,11 +103,11 @@ class gameCanvas {
                 this.ctx.font = `${12 * ((this.xMod + this.yMod) / 2)}px OpenDyslexic`;
                 this.ctx.textAlign = "center";
                 this.ctx.textBaseline = "middle";
+                this.ctx.drawImage(ball[0], ball[1].x, ball[1].y, this.bSize, this.bSize);
                 this.ctx.fillText(ball[2], ball[1].x + this.bSize / 2, ball[1].y + this.bSize / 2)            
             }
+            else {this.ctx.drawImage(ball[0], ball[1].x, ball[1].y, this.bSize, this.bSize);}
             
-            
-            this.ctx.drawImage(ball[0], ball[1].x, ball[1].y, this.bSize, this.bSize);
             if (ball[1].y > this.cnv.height + this.bSize*1.25) {
                 hitBottom += 1
             }
