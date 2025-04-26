@@ -2,7 +2,7 @@ var urlData = {};
 
 function ret(txt="hi") {
     console.log(txt + "; ")
-    document.getElementById("test").innerHTML += txt 
+    document.getElementById("test").innerHTML += txt + "; " 
 }
 
 function sleep(s) {

@@ -3,9 +3,6 @@ var streak = 0
 var topic = ""
 var answer = ""
 var game = ''
-var svg = ` <svg height="200" width="300" xmlns="http://www.w3.org/2000/svg">
-  <line x1="0" y1="0" x2="300" y2="200" style="stroke:red;stroke-width:2" />
-</svg> `
 
 class gameCanvas {
 
@@ -21,9 +18,8 @@ class gameCanvas {
         this.gameOver = false
         this.yMod = this.cnv.height / 300
         this.xMod = this.cnv.clientWidth / 300
-        this.bSize = 50 * (this.yMod + this.xMod) / 2//50        
-        this.sMod = 2
-        this.gravity = 9.81 / 60 / this.sMod
+        this.bSize = 50 * (this.yMod + this.xMod) / 2        
+        this.gravity = 9.81 /60
         
         // Click Handler
         this.isSwiping = false;
@@ -81,6 +77,42 @@ class gameCanvas {
         }
     }   
 
+    getNewXY(tVal, deltaTime) {
+        // x y vX vY r
+        tVal.x += tVal.vX * this.xMod * deltaTime * 60;
+        tVal.y += tVal.vY * this.yMod * deltaTime * 60;
+
+        if (tVal.vX < 0) {
+            tVal.r += 30 * deltaTime
+        } else {
+            tVal.r -= 30 * deltaTime
+        }
+
+        tVal.vY += (Math.abs(tVal.r/90) + 1) * 0.5 * this.gravity * deltaTime
+        // tVal.y = 40
+
+        if (Math.abs(tVal.r) < 30 && tVal.vX < 2) {
+            // ret(tVal.r)
+            tVal.vX += tVal.r * 0.15 * deltaTime
+            
+        } else if (Math.abs(tVal.vX) < 0.05) {
+            
+            tVal.vX = tVal.vX * -8
+        } else {
+            tVal.vX = tVal.vX * 0.9
+        }
+
+        if (tVal.x < -10) {
+            tVal.vX = 0.25
+            tVal.r = 25
+        } else if (tVal.x > this.cnv.width - this.bSize + 10 && tVal.vX > 0) {
+            tVal.vX = -0.25
+            tVal.r = -25
+        }
+
+        return tVal
+    }
+
     updateBalls = () => {
         
         this.ctx.clearRect(0, 0, this.cnv.width, this.cnv.height);
@@ -96,15 +128,29 @@ class gameCanvas {
 
             // Assuming a = 0 and 60 fps
             if (!(ball[2] == "abcdefg")) {
-                ball[1].x += ball[1].vX * this.xMod * deltaTime * 60 / this.sMod;
-                ball[1].vY += this.gravity //Need to deltatimeify
-                ball[1].y += ball[1].vY * this.yMod * deltaTime * 60 / this.sMod;
-                this.ctx.fillStyle = "green";
+                
+                // ball[1] = {
+                //     x:300, 
+                //     y:300,
+                //     vX: 0, 
+                //     vY: 0,
+                //     r: 2
+                // }
+                ball[1] = this.getNewXY(ball[1], deltaTime)
+                
+                this.ctx.fillStyle = "white";
                 this.ctx.font = `${12 * ((this.xMod + this.yMod) / 2)}px OpenDyslexic`;
                 this.ctx.textAlign = "center";
                 this.ctx.textBaseline = "middle";
-                this.ctx.drawImage(ball[0], ball[1].x, ball[1].y, this.bSize, this.bSize);
-                this.ctx.fillText(ball[2], ball[1].x + this.bSize / 2, ball[1].y + this.bSize / 2)            
+
+                this.ctx.save()
+                this.ctx.translate(ball[1].x+this.bSize/2, ball[1].y+this.bSize/2);
+                this.ctx.rotate(2.34 + ball[1].r / 57.2)
+                this.ctx.drawImage(ball[0],  this.bSize/2,  -this.bSize/2, -this.bSize, this.bSize);
+                this.ctx.restore()
+                
+                this.ctx.fillText(ball[2], ball[1].x + this.bSize / 2, ball[1].y + this.bSize / 2)
+                
             }
             else {this.ctx.drawImage(ball[0], ball[1].x, ball[1].y, this.bSize, this.bSize);}
             
@@ -114,17 +160,17 @@ class gameCanvas {
 
         }
         if (hitBottom == this.bCount) {
-            roundLost();
-            newWord();
+            roundLost(true);
+            
         } else {
             requestAnimationFrame(this.updateBalls)
         }
     }
 
-    throwRand(bNum, bDir=3) {
+    throwRand(bNum, bDir=2) {
         let valList = []
         for (let i=0; i < bNum; i++) {
-            let tVal = {x:0, y:0, Vx:0, vY:0}
+            let tVal = {x:0, y:0, vX:0, vY:0, r:0}
             // North
             if (bDir == 0) {
                 tVal = {
@@ -137,11 +183,13 @@ class gameCanvas {
             // south
             else if (bDir == 2) { 
                 tVal = {
-                    x:(this.cnv.width / bNum) * (i + 0.25), 
-                    y:0 - this.bSize,
-                    vX: Math.random()* 0.8 - 0.4, 
-                    vY: 0
-                }
+                    x:25 + ((this.cnv.width - 50) / bNum) * (i + 0.5), 
+                    y:0 - this.bSize - Math.random()*100,
+                    // y:0,
+                    vX: -4 + 8* Math.random(), 
+                    vY: 0.5 * Math.random(),
+                    r:0
+                } 
             }
             // East
             else if (bDir == 1) { 
@@ -161,19 +209,21 @@ class gameCanvas {
                     vY: -5 + Math.random()* 2
                 }
             }
+
             valList.push(tVal)
+            
         }
         return valList
     }
 
-    newBall = (pos={x:100, y:-40, Vx:2, Vy:2}, word="example", stateek=false) => {
+    newBall = (pos={x:100, y:-40, vX:2, vY:2}, word="example", stateek=false) => {
         this.bCount += 1
         return new Promise((resolve) => {
             let img = new Image();
             if (!stateek) {
-                img.src = 'aperture.svg' //URL.createObjectURL(new Blob([svgData], {type: 'image/svg+xml'}))
+                img.src = 'SVG/leaf' + Math.floor(Math.random() * 12) + '.svg' //URL.createObjectURL(new Blob([svgData], {type: 'image/svg+xml'}))
             } else {
-                img.src = 'star.svg'
+                img.src = 'SVG/star.svg'
                 word = "abcdefg"
                 this.bCount -= 1
             }
@@ -250,7 +300,7 @@ async function newWord(bNum=3) {
 
     game = new gameCanvas("gamCnv")
 
-    let randDirs = game.throwRand(bNum, Math.floor((Math.random() * 4)));
+    let randDirs = game.throwRand(bNum, /* Math.floor(Math.random() * 4) */);
     let tempProm = []
     for (let i=1; i < bNum; i++) {
         tempProm.push(game.newBall(randDirs[i], wordDict[topic][i-1]))
@@ -268,11 +318,11 @@ async function newWord(bNum=3) {
     game.bootGame()
 }
 
-function roundLost() {
+function roundLost(tByFloor=false) {
     // if (game.gameOver) {return}
     game.gameOver = true
     ret("l")
-    // newWord()
+    if (tByFloor) {newWord()}
 }
 
 function roundWon() {
