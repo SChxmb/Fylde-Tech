@@ -1,7 +1,8 @@
 var wordDict = {}
 var streak = 0
-var topic = ""
+var topics = []
 var answer = ""
+var aIPA = ""
 var game = ''
 
 class gameCanvas {
@@ -95,8 +96,7 @@ class gameCanvas {
             // ret(tVal.r)
             tVal.vX += tVal.r * 0.15 * deltaTime
             
-        } else if (Math.abs(tVal.vX) < 0.05) {
-            
+        } else if (Math.abs(tVal.vX) < 0.5) {
             tVal.vX = tVal.vX * -8
         } else {
             tVal.vX = tVal.vX * 0.9
@@ -137,7 +137,7 @@ class gameCanvas {
                 //     r: 2
                 // }
                 ball[1] = this.getNewXY(ball[1], deltaTime)
-                
+
                 this.ctx.fillStyle = "white";
                 this.ctx.font = `${12 * ((this.xMod + this.yMod) / 2)}px OpenDyslexic`;
                 this.ctx.textAlign = "center";
@@ -186,10 +186,11 @@ class gameCanvas {
                     x:25 + ((this.cnv.width - 50) / bNum) * (i + 0.5), 
                     y:0 - this.bSize - Math.random()*100,
                     // y:0,
-                    vX: -4 + 8* Math.random(), 
+                    vX: (1 + 3*Math.random()) * (2 * Math.round(Math.random()) - 1), 
                     vY: 0.5 * Math.random(),
                     r:0
                 } 
+                
             }
             // East
             else if (bDir == 1) { 
@@ -221,7 +222,7 @@ class gameCanvas {
         return new Promise((resolve) => {
             let img = new Image();
             if (!stateek) {
-                img.src = 'SVG/leaf' + Math.floor(Math.random() * 12) + '.svg' //URL.createObjectURL(new Blob([svgData], {type: 'image/svg+xml'}))
+                img.src = 'SVG/leaf' + randInt(12) + '.svg' //URL.createObjectURL(new Blob([svgData], {type: 'image/svg+xml'}))
             } else {
                 img.src = 'SVG/star.svg'
                 word = "abcdefg"
@@ -259,22 +260,29 @@ async function init() {
 
     docResized()
 
-    if ('topic' in urlData) {topic = urlData.topic}
-    else {topic="wordset1"} //Default
+    if ('topics' in urlData) {topics = urlData.topics}
+    else {topics=["wordset1", "wordset2"]} //Default
 
-    try {
-        const txt = await (await fetch("words.csv")).text();
-        wordDict = csvToDict(txt);
-        wordDict[topic] = wordDict[topic]
-            .map(value => ({ value, sort: Math.random() }))
-            .sort((a, b) => a.sort - b.sort)
-            .map(({ value }) => value);
-    } catch {
-        wordDict[topic] = ["error with wordset"];
+    topics = ['əʊ', 'ɒ', 'uː']
+    
+    const txt = await (await fetch("words.csv")).text();
+    wordDict = csvToDict(txt);
+
+    for (let tempA of topics) {
+        let tempB = new Audio(`Audio/sfx_${md5(tempA)}.mp3`)
+        tempB.id = `sfx_${tempA}`
+        document.body.appendChild(tempB)
     }
 
     game = new gameCanvas("gamCnv")
-    newWord()
+}
+
+function spamAudio() {
+    for (let tempA of topics) {
+        let tempB = document.getElementById(`sfx_${tempA}`)
+        tempB.play()
+        tempB.pause()
+    }
 }
 
 function docResized() {
@@ -296,27 +304,36 @@ function docResized() {
 }
 
 async function newWord(bNum=3) {
-    answer = wordDict[topic].shift()
+    topics = shuffleArray(topics)
+    aIPA = topics.pop()
+    answer = wordDict[aIPA].shift()
+    wordDict[aIPA].push(answer)
 
     game = new gameCanvas("gamCnv")
 
     let randDirs = game.throwRand(bNum, /* Math.floor(Math.random() * 4) */);
     let tempProm = []
+
     for (let i=1; i < bNum; i++) {
-        tempProm.push(game.newBall(randDirs[i], wordDict[topic][i-1]))
+        tempProm.push(game.newBall(randDirs[i], wordDict[topics[randInt(topics.length)]][i-1]))
     }
     tempProm.push(game.newBall(randDirs[0], answer))
 
-    wordDict[topic] = wordDict[topic]
-            .map(value => ({ value, sort: Math.random() }))
-            .sort((a, b) => a.sort - b.sort)
-            .map(({ value }) => value);
-    wordDict[topic].push(answer)
-    
+    topics.push(aIPA)
+
     await Promise.all(tempProm)
     // [game.newBall({ x: 0, y: 0, vX:0, vY: 0}, "lel")]
+
+    document.getElementById("introAudio").play()
+    document.getElementById("introAudio").onended = function() {
+        document.getElementById(`sfx_${aIPA}`).playbackRate = 0.5
+        document.getElementById(`sfx_${aIPA}`).play()
+    };
+    
     game.bootGame()
 }
+
+
 
 function roundLost(tByFloor=false) {
     // if (game.gameOver) {return}

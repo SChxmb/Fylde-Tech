@@ -11,6 +11,13 @@ html, body {
     padding: 0px;
 }
 
+#playBtn {
+    z-index: 100;
+    position:absolute;
+    height: 100vh;
+    width: 100vw;
+}
+
 #gamCnv {
     border: 2px solid #000000;
     margin-left: 4px;
