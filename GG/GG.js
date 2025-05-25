@@ -155,7 +155,7 @@ class gameCanvas {
             valList.push(tVal)
             
         }
-        return valList
+        return shuffleArray(valList)
     }
 
     newBall = (pos={x:100, y:-40, vX:2, vY:2}, word="example", stateek=false) => {
@@ -191,7 +191,6 @@ class gameCanvas {
 
     async bootGame() {
         await this.waitForAllBallsLoaded();
-        this.balls = shuffleArray(this.balls)
         requestAnimationFrame(this.updateBalls);
     }
 }
