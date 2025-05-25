@@ -69,6 +69,7 @@ class gameCanvas {
     async onBallHit(index) {
         let hit = this.balls.splice(index, 1)[0]; // Remove ball from array
         if (hit[2] == "abcdefg") {this.balls.push(hit);return}
+        document.getElementById(`slice`).play()
         this.newBall(hit[1], hit[2], true)
         this.bCount -= 1
         if (hit[2] == answer) {
@@ -82,34 +83,6 @@ class gameCanvas {
         // x y vX vY r
         tVal.x += tVal.vX * this.xMod * deltaTime * 60;
         tVal.y += tVal.vY * this.yMod * deltaTime * 60;
-
-        if (tVal.vX < 0) {
-            tVal.r += 30 * deltaTime
-        } else {
-            tVal.r -= 30 * deltaTime
-        }
-
-        tVal.vY += (Math.abs(tVal.r/90) + 1) * 0.5 * this.gravity * deltaTime
-        // tVal.y = 40
-
-        if (Math.abs(tVal.r) < 30 && tVal.vX < 2) {
-            // ret(tVal.r)
-            tVal.vX += tVal.r * 0.15 * deltaTime
-            
-        } else if (Math.abs(tVal.vX) < 0.5) {
-            tVal.vX = tVal.vX * -8
-        } else {
-            tVal.vX = tVal.vX * 0.9
-        }
-
-        if (tVal.x < -10) {
-            tVal.vX = 0.25
-            tVal.r = 25
-        } else if (tVal.x > this.cnv.width - this.bSize + 10 && tVal.vX > 0) {
-            tVal.vX = -0.25
-            tVal.r = -25
-        }
-
         return tVal
     }
 
@@ -171,45 +144,13 @@ class gameCanvas {
         let valList = []
         for (let i=0; i < bNum; i++) {
             let tVal = {x:0, y:0, vX:0, vY:0, r:0}
-            // North
-            if (bDir == 0) {
-                tVal = {
-                    x:(this.cnv.width / bNum) * (i + 0.25), 
-                    y:this.cnv.height - this.bSize,
-                    vX: Math.random()* 0.8 - 0.4, 
-                    vY:-9 + Math.random()* 0.5 - 0.25
-                }
-            }
-            // south
-            else if (bDir == 2) { 
-                tVal = {
-                    x:25 + ((this.cnv.width - 50) / bNum) * (i + 0.5), 
-                    y:0 - this.bSize - Math.random()*100,
-                    // y:0,
-                    vX: (1 + 3*Math.random()) * (2 * Math.round(Math.random()) - 1), 
-                    vY: 0.5 * Math.random(),
-                    r:0
-                } 
-                
-            }
-            // East
-            else if (bDir == 1) { 
-                tVal = {
-                    x:0 - this.bSize, 
-                    y:(this.cnv.height / bNum) * (i + 0.25),
-                    vX: 5 + Math.random(),
-                    vY: -5 + Math.random()* 2
-                }
-            }
-            // West
-            else if (bDir == 3) { 
-                tVal = {
-                    x:this.cnv.width + this.bSize, 
-                    y:(this.cnv.height / bNum) * (i + 0.25),
-                    vX: -5 + Math.random(),
-                    vY: -5 + Math.random()* 2
-                }
-            }
+            tVal = {
+                x:((this.cnv.width) / bNum) * (i + 0.25), 
+                y:0 - this.bSize - Math.random()*100,
+                vX: 0, 
+                vY: 0.15 + 0.25 * Math.random(),
+                r:0
+            } 
 
             valList.push(tVal)
             
@@ -261,9 +202,7 @@ async function init() {
     docResized()
 
     if ('topics' in urlData) {topics = urlData.topics}
-    else {topics=["wordset1", "wordset2"]} //Default
-
-    topics = ['əʊ', 'ɒ', 'uː']
+    else {topics=['əʊ', 'ɒ', 'uː']} //Default
     
     const txt = await (await fetch("words.csv")).text();
     wordDict = csvToDict(txt);
@@ -273,8 +212,6 @@ async function init() {
         tempB.id = `sfx_${tempA}`
         document.body.appendChild(tempB)
     }
-
-    game = new gameCanvas("gamCnv")
 }
 
 function spamAudio() {
@@ -283,6 +220,15 @@ function spamAudio() {
         tempB.play()
         tempB.pause()
     }
+    for (let tempA of ['tsi', 'slice']) {
+        let tempB = new Audio(`Audio/${tempA}.mp3`)
+        tempB.id = tempA
+        document.body.appendChild(tempB)
+        tempB.playbackRate = 0.5
+        tempB.play()
+        tempB.pause()
+    }
+
 }
 
 function docResized() {
@@ -294,9 +240,11 @@ function docResized() {
         document.getElementById("gamCnv").style.height = `${getHeight(tempA) - 10}px`
         document.getElementById("gamCnv").style.width = `${getHeight(tempA) * 2 - 10}px`
     } else if (tempB < 0.7) {
+        document.getElementById('playBtn').style.height = `${getWidth(tempA) * 0.8 - 10}px`
         document.getElementById("gamCnv").style.height = `${getWidth(tempA) * 0.8 - 10}px`
         document.getElementById("gamCnv").style.width = `${getWidth(tempA) - 10}px`
     } else {
+        
         if (tempB >= 1) {hz = true}
         document.getElementById("gamCnv").style.height = `${getHeight(tempA) - 10}px`
         document.getElementById("gamCnv").style.width = `${getWidth(tempA) - 10}px`        
@@ -304,6 +252,12 @@ function docResized() {
 }
 
 async function newWord(bNum=3) {
+    if (!(game == '')) {
+        game.gameOver = true
+        game.balls = []
+    }
+    game = new gameCanvas("gamCnv")
+    document.getElementById("winLossDiv").style.display = "none"
     topics = shuffleArray(topics)
     aIPA = topics.pop()
     answer = wordDict[aIPA].shift()
@@ -333,18 +287,30 @@ async function newWord(bNum=3) {
     game.bootGame()
 }
 
-
-
 function roundLost(tByFloor=false) {
-    // if (game.gameOver) {return}
+    if (game.gameOver) {return}
     game.gameOver = true
-    ret("l")
+    tempA = document.getElementById("winLossDiv")
+    streak = 0
+    tempA.innerHTML = `<p class="wlHeader">You lost. . .</p>
+                <p>The answer was : <span style="font-size: larger;">${answer}</span></p>
+                <audio src="Audio/word_${answer}.mp3" id="wLAud" controls></audio>
+                <p>Click anywhere to try again. . .</p>`
+    document.getElementById('wLAud').playbackRate = 0.75
+    tempA.style.display = "block"
     if (tByFloor) {newWord()}
 }
 
 function roundWon() {
     if (game.gameOver) {return}
     game.gameOver = true
-    ret("w")
-    // newWord()
+    tempA = document.getElementById("winLossDiv")
+    streak += 1
+    tempA.innerHTML = `<p class="wlHeader">You won!</p>
+                <p>The answer was : <span style="font-size: larger;">${answer}</span></p>
+                <audio src="Audio/word_${answer}.mp3" id="wLAud" controls></audio>
+                <p>You have a streak of ${streak} correct answers!</p>
+                <p>Click anywhere to continue. . .</p>`
+    document.getElementById('wLAud').playbackRate = 0.75
+    tempA.style.display = "block"
 }

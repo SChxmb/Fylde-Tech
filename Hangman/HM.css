@@ -4,10 +4,6 @@
     font-family: OpenDyslexic;
 } 
 
-body {
-    background-color: white;
-}
-
 #fullOut {
     position: relative;
     border: black 2px solid;
@@ -17,7 +13,7 @@ body {
     width: calc(100vw - 60px);
     padding: 20px;
     overflow: none;
-    background-color: white;
+    background-color: #dfe4d6;
 }
 
 #hmKeypress {

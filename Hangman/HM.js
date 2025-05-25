@@ -42,7 +42,7 @@ function docResized() {
     let tempB = getWidth(tempA) / getHeight(tempA)
     document.getElementById("test").innerHTML = tempB
     if (tempB > 1.4) {
-       document.getElementById("fullOut").style = `width:${getHeight(tempA) * 1.3}px !important;`
+        document.getElementById("fullOut").style = `width:${getHeight(tempA) * 1.3}px !important;`
     } else if (tempB < 0.8) {
         document.getElementById("fullOut").style = `height:${getWidth(tempA) * 0.8}px !important;`
     }

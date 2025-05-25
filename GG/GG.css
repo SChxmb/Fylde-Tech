@@ -13,7 +13,7 @@ html, body {
 
 #playBtn {
     z-index: 100;
-    position:absolute;
+    position: absolute;
     height: 100vh;
     width: 100vw;
 }
@@ -23,4 +23,27 @@ html, body {
     margin-left: 4px;
     display: block;
     background-color: #dfe4d6;
+}
+
+#winLossDiv:hover {
+    cursor: pointer;
+}
+
+#winLossDiv {
+    display: none;
+    position: absolute;
+    background-color: hsla(0, 0%, 0%, 0.8);
+    color: white;
+    height: 80%;
+    width: 80%;
+    top: 10%;
+    left:10%;
+    z-index: 9;
+    border-radius: 40px;
+    text-align: center;
+    border: rgba(0, 0, 0, 0.25) 10px solid;
+}
+
+.wlHeader {
+    font-size: min(4cqw, 4cqh);
 }
