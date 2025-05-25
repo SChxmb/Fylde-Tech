@@ -191,6 +191,7 @@ class gameCanvas {
 
     async bootGame() {
         await this.waitForAllBallsLoaded();
+        this.balls = shuffleArray(this.balls)
         requestAnimationFrame(this.updateBalls);
     }
 }
