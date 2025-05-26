@@ -69,14 +69,15 @@ class gameCanvas {
     async onBallHit(index) {
         let hit = this.balls.splice(index, 1)[0]; // Remove ball from array
         if (hit[2] == "abcdefg") {this.balls.push(hit);return}
-        document.getElementById(`slice`).play()
-        this.newBall(hit[1], hit[2], true)
-        this.bCount -= 1
         if (hit[2] == answer) {
+            document.getElementById(`win`).play()
             roundWon()
         } else {
+            document.getElementById(`slice${randInt(3)}`).play()
             roundLost()
         }
+        this.newBall(hit[1], hit[2], true)
+        this.bCount -= 1
     }   
 
     getNewXY(tVal, deltaTime) {
@@ -101,14 +102,6 @@ class gameCanvas {
 
             // Assuming a = 0 and 60 fps
             if (!(ball[2] == "abcdefg")) {
-                
-                // ball[1] = {
-                //     x:300, 
-                //     y:300,
-                //     vX: 0, 
-                //     vY: 0,
-                //     r: 2
-                // }
                 ball[1] = this.getNewXY(ball[1], deltaTime)
 
                 this.ctx.fillStyle = "white";
@@ -140,7 +133,7 @@ class gameCanvas {
         }
     }
 
-    throwRand(bNum, bDir=2) {
+    throwRand(bNum) {
         let valList = []
         for (let i=0; i < bNum; i++) {
             let tVal = {x:0, y:0, vX:0, vY:0, r:0}
@@ -198,7 +191,7 @@ class gameCanvas {
 async function init() {
 
     genInit()
-
+    
     docResized()
 
     if ('topics' in urlData) {topics = urlData.topics}
@@ -212,24 +205,31 @@ async function init() {
         tempB.id = `sfx_${tempA}`
         document.body.appendChild(tempB)
     }
+    for (let tempA of ['tsi', 'slice1', 'slice2', 'slice0', 'win']) {
+        let tempB = new Audio(`Audio/${tempA}.mp3`)
+        tempB.id = `${tempA}`
+        document.body.appendChild(tempB)
+    }
 }
 
 function spamAudio() {
+    audCount = 0
+    audDone = 0
     for (let tempA of topics) {
         let tempB = document.getElementById(`sfx_${tempA}`)
+        tempB.muted = true
         tempB.play()
-        tempB.pause()
+        setTimeout(() => {tempB.pause(); tempB.muted = false}
+            , 10)
     }
-    for (let tempA of ['tsi', 'slice']) {
-        let tempB = new Audio(`Audio/${tempA}.mp3`)
-        tempB.id = tempA
-        document.body.appendChild(tempB)
-        tempB.playbackRate = 0.5
+    for (let tempA of ['tsi', 'slice1', 'slice2', 'slice0', 'win']) {
+        let tempB = document.getElementById(`${tempA}`)
+        tempB.muted = true
         tempB.play()
-        tempB.pause()
+        setTimeout(() => {tempB.pause(); tempB.muted = false}
+            , 10)
     }
-
-}
+} 
 
 function docResized() {
     let tempA = document.body
@@ -304,6 +304,7 @@ function roundLost(tByFloor=false) {
 function roundWon() {
     if (game.gameOver) {return}
     game.gameOver = true
+    setTimeout(() => {document.getElementById('win').play()}, 50)
     tempA = document.getElementById("winLossDiv")
     streak += 1
     tempA.innerHTML = `<p class="wlHeader">You won!</p>

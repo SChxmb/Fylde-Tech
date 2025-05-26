@@ -13,7 +13,7 @@
     <body onload="init()" onresize="docResized()">
         <audio id="introAudio" src="Audio/tsi.mp3"></audio>
         <p id="test" style="user-select: none; position: fixed; top: 0; left: 0; z-index: 10000; color: red; margin-left: 4px;"></p>
-        <img src="SVG/play.svg" id="playBtn" onclick="document.getElementById('playBtn').style.display = 'none';spamAudio();newWord()">
+        <img src="SVG/play.svg" id="playBtn" onclick="spamAudio(); document.getElementById('playBtn').style.display = 'none';newWord()">
         <div id="winLossDiv" onclick="newWord()"></div>
         <canvas id="gamCnv"></canvas>
     </body>
