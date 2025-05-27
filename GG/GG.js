@@ -141,7 +141,7 @@ class gameCanvas {
                 x:((this.cnv.width) / bNum) * (i + 0.25), 
                 y:0 - this.bSize - Math.random()*100,
                 vX: 0, 
-                vY: 0.15 + 0.25 * Math.random(),
+                vY: 0.25 + 0.25 * Math.random(),
                 r:0
             } 
 
